@@ -32,46 +32,69 @@ redis_config = {
 # Setup ORM
 #
 
-caminte = require('caminte')
-Schema  = caminte.Schema
-schema  = new Schema(redis_config.driver, redis_config)
-default_date = new Date("0000-01-01T00:00:00Z")
+nohm = require('nohm').Nohm
+Redis = require('redis')
+redisClient = Redis.createClient(info.port, info.hostname)
+setTimeout(
+  ->
+    nohm.setClient(redisClient)
+, 3000)
+nohm.setPrefix('KnockKnock')
 
 # define models
-WorkSession = schema.define('KnockKnock::Session',
-  id:    { type: schema.String ,index: true }
-  name:  { type: schema.String ,index: true }
-  email: { type: schema.String ,index: true }
-  start: { type: schema.Date, default: Date.now,index: true  }
-  end:   { type: schema.Date, default: default_date, index: true }
-  completed: { type: schema.Boolean, default: false, index: true }
+default_date = (new Date("2000-01-01T00:00:00Z")).getTime()
+
+WorkSession = nohm.model('Session',
+  properties: {
+    id:    { type: 'string', index: true }
+    name:  { type: 'string', index: true }
+    email: { type: 'string', index: true }
+    start: { type: 'timestamp', defaultValue: Date.now,index: true  }
+    end:   { type: 'timestamp', defaultValue: default_date, index: true }
+  }
 )
 
-WorkSession.beforeSave = (next) ->
-  console.log this.end
-  console.log default_date
-  this.completed = if this.end == default_date then false else true
-  next()
+# WorkSession.beforeSave = (next) ->
+#   console.log this.end
+#   console.log default_date
+#   this.completed = if this.end == default_date then false else true
+#   next()
+
+class Sessions
+  startSession: (user, cb)->
+    session = new WorkSession
+      id: user.id
+      name: user.name
+      email: user.email_address
+    session.save cb
+
+  endSession: (user, cb)->
+
+  deleteByID: (id)->
+    session = nohm.factory('Session')
+    session.id = id
+    session.remove()
+
+  findOpenSessionsByUser: (user, cb)->
+    WorkSession.find {end: default_date, id: user.id}, cb
+
+  findOpenSessions: (cb)->
+    WorkSession.find {end: default_date}, cb
 
 
-
-
-WorkSession.destroyAll -> console.log('destroyed')
+sessionController = new Sessions()
 
 module.exports = (robot) ->
 
   robot.respond /back/i, (msg) ->
     user = msg.message.user
-    session = new WorkSession
-      id: user.id
-      name: user.name
-      email: user.email_address
-    session.save()
-    msg.reply JSON.stringify(session)
+    sessionController.startSession user, (err) ->
+      if err
+        msg.reply 'Recording error.'
+      else 
+        msg.reply 'Welcome back'
 
   robot.respond /users/i, (msg) ->
-    WorkSession.all (err, y) -> msg.reply JSON.stringify(y)
-    sessions = WorkSession.find().where({ completed: false })
-    sessions.run {}, (err, x) ->
+    sessionController.findOpenSessions (err, x) ->
       msg.reply JSON.stringify(x)
 
