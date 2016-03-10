@@ -16,11 +16,11 @@
     "url": "https://github.com/thebeansgroup/hubot-knockknock/issues"
   },
   "dependencies": {
-    "coffee-script": "~1.6"
+    "caminte": "^0.2.7",
+    "coffee-script": "~1.6",
+    "redis": "^2.4.2"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "main": "index.coffee",
-  "scripts": {
-  }
+  "scripts": {}
 }
