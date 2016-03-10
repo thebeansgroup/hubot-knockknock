@@ -1,0 +1,26 @@
+{
+  "name": "hubot-knockknock",
+  "description": "Keep track of who is working and when.",
+  "version": "0.0.1",
+  "author": "Ad Taylor",
+  "license": "MIT",
+  "keywords": [
+    "hubot",
+    "hubot-scripts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/thebeansgroup/hubot-knockknock.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thebeansgroup/hubot-knockknock/issues"
+  },
+  "dependencies": {
+    "coffee-script": "~1.6"
+  },
+  "devDependencies": {
+  },
+  "main": "index.coffee",
+  "scripts": {
+  }
+}
