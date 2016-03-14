@@ -7,21 +7,16 @@
 # Commands:
 #   hubot back - sets you as at work
 #   hubot afk - sets you to Away From Keyboard
-#   hubot stats(?) - Lists what you’ve worked that day
-#   hubot users - list who is at work
-#   hubot  ? <today|week> - list when team have been at work
-#   hubot  ? <today|week|month> [<user>] - report of team working habits. Admin only
+#   hubot stats - list of what you’ve worked that day
+#   hubot users - list who is currently working
+#   hubot knockknock <today|week|month> <user> Admin only
 #
 # Notes:
 #
 
-#
-# Deps
-#
-
 Sessions = require('./workSession')
+Templates = require('./templates')
 sessionController = new Sessions()
-Templates = require('./workSession/templates.coffee')
 tmpl = new Templates()
 
 module.exports = (robot) ->
@@ -36,5 +31,20 @@ module.exports = (robot) ->
 
   robot.respond /users/i, (msg) ->
     sessionController.findOpenSessions (err, sessions) ->
-      msg.send tmpl.openSessions(sessions)
+      msg.send tmpl.openSessions(err, sessions)
 
+  robot.respond /stats/i, (msg) ->
+    sessionController.findDailySessionsByUser msg.message.user,
+      (err, sessions) ->
+        msg.send tmpl.dailyUserStats(err, sessions)
+
+  robot.respond /(?:knockknock|kk){1} (today|week|month) ([@a-zA-Z]+)/i,
+    (msg) ->
+      if not robot.auth.isAdmin(msg.message.user)
+        return msg.send('(ಠ_ಠ) Admin only.')
+
+      duration = msg.match[1]
+      user = msg.match[2].replace('@', '')
+      sessionController.findSessionsByUserAndDuration {name: user}, duration,
+        (err, sessions) ->
+          msg.send tmpl.report(err, sessions, user)
