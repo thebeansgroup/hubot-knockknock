@@ -30,16 +30,24 @@ redisUrl =   if process.env.REDISTOGO_URL?
 info   = Url.parse redisUrl, true
 redisClient = if info.auth then Redis.createClient(info.port, info.hostname, {no_ready_check: true}) else Redis.createClient(info.port, info.hostname)
 
+
+if info.auth
+  redisClient.auth info.auth.split(':')[1], (err) ->
+    if err
+      console.log 'hubot-knockknock: Failed to authenticate to Redis'
+    else
+      console.log 'hubot-knockknock: Successfully authenticated to Redis'
+
+
+
 #
 # Setup ORM
 #
 
 # redisClient = Redis.createClient(info.port, info.hostname)
 nohm.setPrefix('KnockKnock')
-setTimeout(
-  ->
+redisClient.on "connect", ->
     nohm.setClient(redisClient)
-, 3000) # TODO: Obs
 
 
 #
