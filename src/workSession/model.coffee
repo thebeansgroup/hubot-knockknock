@@ -11,7 +11,7 @@ null_date = require('./null_date.coffee')
 # Redis Details
 #
 
-redis_url =  if process.env.REDISTOGO_URL?
+redisUrl =   if process.env.REDISTOGO_URL?
                redisUrlEnv = 'REDISTOGO_URL'
                process.env.REDISTOGO_URL
              else if process.env.REDISCLOUD_URL?
@@ -26,7 +26,6 @@ redis_url =  if process.env.REDISTOGO_URL?
              else
                'redis://localhost:6379'
 
-info = Url.parse redis_url, true
 
 info   = Url.parse redisUrl, true
 redisClient = if info.auth then Redis.createClient(info.port, info.hostname, {no_ready_check: true}) else Redis.createClient(info.port, info.hostname)
