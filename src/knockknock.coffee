@@ -1,8 +1,4 @@
 # Description
-#   ...
-#
-# Configuration:
-#   HUBOT_AUTH_ADMIN - A comma separate list of user IDs
 #
 # Commands:
 #   hubot back - sets you as at work
@@ -10,8 +6,6 @@
 #   hubot stats - list of what you’ve worked that day
 #   hubot users - list who is currently working
 #   hubot knockknock <today|week|month> <user> Admin only
-#
-# Notes:
 #
 
 Sessions = require('./workSession')
