@@ -11,19 +11,31 @@ null_date = require('./null_date.coffee')
 # Redis Details
 #
 
-redis_url = process.env.REDISTOGO_URL \
-              or process.env.REDISCLOUD_URL \
-              or process.env.BOXEN_REDIS_URL \
-              or process.env.REDIS_URL \
-              or 'redis://localhost:6379'
+redis_url =  if process.env.REDISTOGO_URL?
+               redisUrlEnv = 'REDISTOGO_URL'
+               process.env.REDISTOGO_URL
+             else if process.env.REDISCLOUD_URL?
+               redisUrlEnv = 'REDISCLOUD_URL'
+               process.env.REDISCLOUD_URL
+             else if process.env.BOXEN_REDIS_URL?
+               redisUrlEnv = 'BOXEN_REDIS_URL'
+               process.env.BOXEN_REDIS_URL
+             else if process.env.REDIS_URL?
+               redisUrlEnv = 'REDIS_URL'
+               process.env.REDIS_URL
+             else
+               'redis://localhost:6379'
 
 info = Url.parse redis_url, true
+
+info   = Url.parse redisUrl, true
+redisClient = if info.auth then Redis.createClient(info.port, info.hostname, {no_ready_check: true}) else Redis.createClient(info.port, info.hostname)
 
 #
 # Setup ORM
 #
 
-redisClient = Redis.createClient(info.port, info.hostname)
+# redisClient = Redis.createClient(info.port, info.hostname)
 nohm.setPrefix('KnockKnock')
 setTimeout(
   ->
