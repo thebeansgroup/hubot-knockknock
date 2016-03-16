@@ -32,7 +32,7 @@ module.exports = (robot) ->
       (err, sessions) ->
         msg.send tmpl.dailyUserStats(err, sessions)
 
-  robot.respond /(?:knockknock|kk){1} (today|week|month) ([@a-zA-Z]+)/i,
+  robot.respond /(?:knockknock|kk){1} (today|week|month) ([@.a-zA-Z]+)/i,
     (msg) ->
       if not robot.auth.isAdmin(msg.message.user)
         return msg.send('(ಠ_ಠ) Admin only.')
