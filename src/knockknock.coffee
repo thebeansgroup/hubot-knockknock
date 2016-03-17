@@ -43,6 +43,6 @@ module.exports = (robot) ->
         (err, sessions) ->
           msg.send tmpl.report(err, sessions, user)
 
-  robot.router.post '/knockknock/end-open-sessions',
+  robot.router.get '/knockknock/end-open-sessions',
     sessionController.endOpenSessions
 
