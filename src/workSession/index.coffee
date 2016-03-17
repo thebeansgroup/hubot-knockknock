@@ -53,6 +53,15 @@ class Sessions
         end: Date.now()
       session.save cb
 
+  endOpenSessions: (cb) ->
+    this.findOpenSessions (err, sessions) ->
+      cb(true) if !sessions.length
+      session = sessions[0]
+      console.log 'CLOSE', session
+      # session.p
+      #   end: Date.now()
+      #   invalid: true
+      # session.save cb
 
   deleteByID: (id) ->
     session = nohm.factory('Session')

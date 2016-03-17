@@ -42,3 +42,7 @@ module.exports = (robot) ->
       sessionController.findSessionsByUserAndDuration {name: user}, duration,
         (err, sessions) ->
           msg.send tmpl.report(err, sessions, user)
+
+  robot.router.post '/knockknock/end-open-sessions',
+    sessionController.endOpenSessions
+
