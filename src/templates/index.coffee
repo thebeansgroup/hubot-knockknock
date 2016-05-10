@@ -42,7 +42,9 @@ class Templates
       str.push """
 Started #{start.format('LT')} — #{end.format('LT')}#{extras}
       """
+    finish = moment().add( ((60*7.5) - total) , 'minutes').calendar()
     str.push "*Total:* #{utils.minsToHours(total)}"
+    str.push "*Finish:* #{finish}"
     str.join '\n'
 
   invalidText: (invalid) ->
